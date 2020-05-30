@@ -3,6 +3,8 @@ package com.example.fragmentcallback;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -17,44 +19,40 @@ import android.widget.ListView;
 public class CountriesFragment extends Fragment {
 
     View rootView;
-    ListView listViewCountries;
-    ArrayAdapter<String> countryNamesAdapter;
-    Context context;
+    ListView listView;
     String[] countries;
+    Context context;
+    ArrayAdapter<String> contriesAdapter;
     FragmentActionListener fragmentActionListener;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        rootView= inflater.inflate(R.layout.fragment_countries, container, false);
-        initUI();
-        return rootView;
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+       rootView=inflater.inflate(R.layout.fragment_countries,container,false);
+       initUi();
+       return rootView;
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.app_name)+"->Select Country");
-    }
-
     public void setFragmentActionListener(FragmentActionListener fragmentActionListener){
-        this.fragmentActionListener = fragmentActionListener;
+        this.fragmentActionListener=fragmentActionListener;
     }
 
-    private void initUI() {
+    private void initUi() {
         context=getContext();
-        countries=getResources().getStringArray(R.array.countries);
-        listViewCountries= rootView.findViewById(R.id.listViewCountries);
-        countryNamesAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,countries);
-        listViewCountries.setAdapter(countryNamesAdapter);
+     listView=rootView.findViewById(R.id.listViewCountries);
+     countries=getResources().getStringArray(R.array.countries);
+     contriesAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,countries);
+     listView.setAdapter(contriesAdapter);
+     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+         @Override
+         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        listViewCountries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(fragmentActionListener!=null){
-                    fragmentActionListener.onCountrySelected(countries[position]);
-                }
-            }
-        });
+             if(fragmentActionListener!=null){
+                 Bundle bundle=new Bundle();
+                 bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_COUNTRY_SELECTED);
+                 bundle.putString("countries_selected",countries[position]);
+                 fragmentActionListener.onActionPerformed(bundle);
+             }
+         }
+     });
     }
 }

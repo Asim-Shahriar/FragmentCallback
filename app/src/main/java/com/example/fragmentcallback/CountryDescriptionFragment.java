@@ -2,10 +2,12 @@ package com.example.fragmentcallback;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +16,20 @@ import android.widget.TextView;
 
 public class CountryDescriptionFragment extends Fragment {
 
-    private static final String COMMON_TAG="CombinedLifeCycle";
-    private static final String FRAGMENT_NAME=CountryDescriptionFragment.class.getSimpleName();
-    private static final String TAG=COMMON_TAG;
     View rootView;
     TextView textViewCountryDescription;
+
+
     String countryName;
     String countryDescription;
 
+
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        rootView= inflater.inflate(R.layout.fragment_country_description, container, false);
-        initUI();
-        return rootView;
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+       rootView=inflater.inflate(R.layout.fragment_country_description,container,false);
+       initUI();
+       return rootView;
     }
 
     private void initUI() {
@@ -37,9 +38,11 @@ public class CountryDescriptionFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
         Bundle bundle=getArguments();
-        countryName=bundle.getString(FragmentActionListener.KEY_SELECTED_COUNTRY,"India");
+        countryName=bundle.getString("countries_selected");
+        Log.i("country","selected"+countryName);
         countryDescription=getString(getStringId(countryName));
     }
 
@@ -72,7 +75,8 @@ public class CountryDescriptionFragment extends Fragment {
             return R.string.India;
         }
     }
-    public String toString(){
+    @Override
+    public String toString() {
         return this.getClass().getSimpleName();
     }
 }
